@@ -1,21 +1,14 @@
-# Bb
+# Running
 
-**TODO: Add description**
+`iex -S mix`
 
-## Installation
+The process will run automatically, uploading the file `file.txt` however many
+times the `Bb.Producer` (see bb.ex) is defined to run.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `bb` to your list of dependencies in `mix.exs`:
+# Metrics
 
-```elixir
-def deps do
-  [
-    {:bb, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/bb](https://hexdocs.pm/bb).
-
+Total counts: `:ets.lookup(:metrix, :counter)`
+counts by process: `:ets.match_object(:metrix, {{:counter, :_}, :_})`
+Time in MS by process: `:ets.match_object(:metrix, {{:sum, :_}, :_})`
+Min/Max by process: `:ets.match_object(:metrix, {{:summary, :_}, :_})`
+Distribution by process: `:ets.match_object(:metrix, {{:distribution, :_, :_}, :_})`
