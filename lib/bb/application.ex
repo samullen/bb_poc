@@ -35,17 +35,4 @@ defmodule Bb.Application do
     opts = [strategy: :one_for_one, name: Bb.Supervisor]
     Supervisor.start_link(children, opts)
   end
-
-  defp handle_event([:broadway, :processor, :message, :stop], %{duration: duration}, metadata, _config) do
-    total = System.convert_time_unit(duration, :nanosecond, :millisecond)
-
-    IO.puts "message #{metadata.processor_key}: #{total}"
-    duration
-  end
-
-  defp handle_event([:broadway, :processor, :stop], %{duration: duration}, metadata, _config) do
-    total = System.convert_time_unit(duration, :nanosecond, :millisecond)
-
-    IO.puts "processor #{metadata.name}: #{total}"
-  end
 end

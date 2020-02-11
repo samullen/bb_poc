@@ -26,7 +26,11 @@ defmodule Bb.Uploader do
       {"Content-Type", "text/plain"},
       {"X-Bz-Content-Sha1", state.sha1}
     ]
-    options = [ssl: [{:versions, [:'tlsv1.2']}], recv_timeout: 30_000]
+    options = [
+      ssl: [{:versions, [:'tlsv1.2']}],
+      recv_timeout: 30_000,
+      hackney: [pool: :default]
+    ]
 
     case HTTPoison.post(state.upload_url, state.body, headers, options) do
       {:ok, %{status_code: 200} = status} ->

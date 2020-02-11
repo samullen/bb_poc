@@ -23,7 +23,7 @@ defmodule Bb do
 
   def handle_message(:default, %Message{data: data} = message, _context) do
     :poolboy.transaction(:uploader, fn(pid)->
-      GenServer.call(pid, {:upload, data})
+      GenServer.call(pid, {:upload, data}, 30_000)
     end)
 
     message

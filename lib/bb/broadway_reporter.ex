@@ -1,7 +1,6 @@
 defmodule Bb.BroadwayReporter do
   use GenServer
 
-  require Logger
 
   alias Telemetry.Metrics.{Counter, Distribution, LastValue, Sum, Summary}
 
@@ -31,8 +30,6 @@ defmodule Bb.BroadwayReporter do
   def handle_metric(%Counter{}, _measurements, metadata) do
     :ets.update_counter(:metrix, :counter, 1, {:counter, 0})
     :ets.update_counter(:metrix, {:counter, metadata.name}, 1, {:counter, 0})
-
-    Logger.info "Counter - #{inspect :ets.lookup(:metrix, :counter)}"
   end
 
   def handle_metric(%Sum{}, %{duration: duration}, metadata) do
@@ -40,8 +37,6 @@ defmodule Bb.BroadwayReporter do
     key = {:sum, metadata.name}
 
     :ets.update_counter(:metrix, key, duration, {key, 0})
-
-    Logger.info "Sum - #{inspect :ets.lookup(:metrix, key)}"
   end
 
   def handle_metric(%Summary{} = metric, measurements, metadata) do
@@ -61,8 +56,6 @@ defmodule Bb.BroadwayReporter do
       end
 
     :ets.insert(:metrix, {key, summary})
-
-    Logger.info "Summary - #{inspect summary}"
   end
 
   def handle_metric(%Distribution{} = metric, measurements, metadata) do
@@ -70,8 +63,6 @@ defmodule Bb.BroadwayReporter do
     key = {:distribution, metadata.name}
 
     update_distribution(metric.buckets, metadata.name, duration)
-
-    Logger.info "Distribution - #{inspect :ets.match_object(:metrix, {{:distribution, :_}, :_})}"
   end
 
   defp update_distribution([], name, _duration) do
