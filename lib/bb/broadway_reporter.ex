@@ -1,7 +1,6 @@
 defmodule Bb.BroadwayReporter do
   use GenServer
 
-
   alias Telemetry.Metrics.{Counter, Distribution, LastValue, Sum, Summary}
 
   def start_link(opts) do
@@ -45,14 +44,16 @@ defmodule Bb.BroadwayReporter do
 
     summary =
       case :ets.lookup(:metrix, key) do
-        [{key, {min, max}}] ->
+        [{key, {min, max, sum, count}}] ->
           {
             min(min, duration),
-            max(max, duration)
+            max(max, duration),
+            sum + duration,
+            count + 1
           }
 
         _ ->
-          {duration, duration}
+          {duration, duration, duration, 1}
       end
 
     :ets.insert(:metrix, {key, summary})
