@@ -1,6 +1,10 @@
 defmodule Bb.Uploader do
   use GenServer
 
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, nil)
+  end
+
   @impl GenServer
   def init(_) do
     body = File.read!("file.txt")
@@ -8,10 +12,6 @@ defmodule Bb.Uploader do
     {token, upload_url} = fetch_upload_key()
 
     {:ok, %{token: token, upload_url: upload_url, body: body, sha1: sha1}}
-  end
-
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, nil)
   end
 
   @impl GenServer

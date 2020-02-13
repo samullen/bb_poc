@@ -11,7 +11,7 @@ defmodule Bb.Application do
     [
       {:name, {:local, :uploader}},
       {:worker_module, Uploader},
-      {:size, 40},
+      {:size, 100},
     ]
   end
 
@@ -21,7 +21,7 @@ defmodule Bb.Application do
       Telemetry.Metrics.sum("broadway.processor.message.stop.duration"),
       # Telemetry.Metrics.last_value("broadway.processor.message.stop.duration", unit: {:native, :millisecond}),
       Telemetry.Metrics.summary("broadway.processor.message.stop.duration", unit: {:native, :millisecond}),
-      Telemetry.Metrics.distribution("broadway.processor.message.stop.duration", buckets: [200, 500, 1000], unit: {:native, :millisecond}),
+      Telemetry.Metrics.distribution("broadway.processor.message.stop.duration", buckets: [100, 200, 500, 1000], unit: {:native, :millisecond}),
     ]
 
     children = [
