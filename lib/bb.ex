@@ -13,7 +13,7 @@ defmodule Bb do
       ],
       processors: [
         default: [
-          concurrency: 40,
+          concurrency: Application.get_env(:bb, :concurrency),
           min_demand: 2,
           max_demand: 5,
         ]

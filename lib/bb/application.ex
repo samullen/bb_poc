@@ -11,7 +11,7 @@ defmodule Bb.Application do
     [
       {:name, {:local, :uploader}},
       {:worker_module, Uploader},
-      {:size, 40},
+      {:size, Application.get_env(:bb, :concurrency)},
     ]
   end
 

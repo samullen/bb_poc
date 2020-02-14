@@ -1,6 +1,7 @@
 import Config
 
 config :bb,
+  concurrency: 100,
   bb_app_id: "your id here",
   bb_app_key: "your key here",
   bucket: "your bucket here"
