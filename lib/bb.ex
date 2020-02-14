@@ -13,7 +13,7 @@ defmodule Bb do
       ],
       processors: [
         default: [
-          concurrency: 100,
+          concurrency: 40,
           min_demand: 2,
           max_demand: 5,
         ]

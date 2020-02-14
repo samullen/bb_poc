@@ -11,7 +11,7 @@ defmodule Bb.Application do
     [
       {:name, {:local, :uploader}},
       {:worker_module, Uploader},
-      {:size, 100},
+      {:size, 40},
     ]
   end
 
@@ -24,7 +24,12 @@ defmodule Bb.Application do
       Telemetry.Metrics.distribution("broadway.processor.message.stop.duration", buckets: [100, 200, 500, 1000], unit: {:native, :millisecond}),
     ]
 
+    :ets.new(:txtile, [:named_table, :public, :set, {:write_concurrency, true}])
+    data = File.read!("file.txt")
+    :ets.insert(:txtile, {:file, data})
+
     children = [
+      # Bb.Data,
       :poolboy.child_spec(:uploader, poolboy_config(), []),
       {Bb.BroadwayReporter, metrics: metrics},
       Bb

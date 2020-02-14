@@ -1,5 +1,9 @@
 # Backblaze Proof of Concept
 
+Research project to determine if Backblaze B2 is capable of handling the number
+of uploads we perform. Trying to determine what is needed to reach a 10,000
+file/sec upload speed.
+
 ## Setup
 
 1. Copy the `config/config.exs.example` to `config/config.exs`
