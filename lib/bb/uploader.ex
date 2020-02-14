@@ -3,13 +3,9 @@ defmodule Bb.Uploader do
 
   @impl GenServer
   def init(_) do
-    # body = File.read!("file.txt")
-    # body = Bb.Data.get()
-    [{:file, body}] = :ets.lookup(:txtile, :file)
-    sha1 = :crypto.hash(:sha, body) |> Base.encode16
-    {token, upload_url} = fetch_upload_key()
+    Process.send_after(self, :initialize, 0)
 
-    {:ok, %{token: token, upload_url: upload_url, body: body, sha1: sha1}}
+    {:ok, %{token: nil, upload_url: nil, body: nil, sha1: nil}}
   end
 
   def start_link(_) do
@@ -17,9 +13,23 @@ defmodule Bb.Uploader do
   end
 
   @impl GenServer
+  def handle_info(:initialize, state) do
+    # body = File.read!("file.txt")
+    # body = Bb.Data.get()
+    [{:file, body}] = :ets.lookup(:txtile, :file)
+    sha1 = :crypto.hash(:sha, body) |> Base.encode16
+    {token, upload_url} = fetch_upload_key()
+
+    {:noreply, %{token: token, upload_url: upload_url, body: body, sha1: sha1}}
+  end
+
+  @impl GenServer
   def handle_call({:upload, id}, _from, state) do
     upload_id(id, state)
   end
+
+  @impl GenServer
+  def handle_info({:ssl_closed, _}, state), do: {:noreply, state}
 
   def upload_id(id, state) do
     headers = [
@@ -31,7 +41,7 @@ defmodule Bb.Uploader do
     options = [
       ssl: [{:versions, [:'tlsv1.2']}],
       recv_timeout: 30_000,
-      hackney: [pool: :default]
+      hackney: [pool: :bb]
     ]
 
     case HTTPoison.post(state.upload_url, state.body, headers, options) do
@@ -54,6 +64,10 @@ defmodule Bb.Uploader do
         upload_id(id, new_state)
 
       {:error, %{reason: :checkout_timeout}} ->
+        IO.puts "timeout: retrying #{inspect self()}"
+        upload_id(id, state)
+
+      {:error, %{reason: :connection_timeout}} ->
         IO.puts "timeout: retrying #{inspect self()}"
         upload_id(id, state)
     end

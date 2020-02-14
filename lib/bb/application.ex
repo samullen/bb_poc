@@ -29,6 +29,7 @@ defmodule Bb.Application do
     :ets.insert(:txtile, {:file, data})
 
     children = [
+      :hackney_pool.child_spec(:bb, [timeout: 15000, max_connections: 200]),
       # Bb.Data,
       :poolboy.child_spec(:uploader, poolboy_config(), []),
       {Bb.BroadwayReporter, metrics: metrics},
